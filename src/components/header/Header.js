@@ -1,13 +1,19 @@
 import React, { useEffect, useState, useRef } from "react";
-import { Link, useNavigate } from "react-router-dom";
-import { toast } from "react-toastify";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import "./style.css";
 const Header = () => {
-	const [search, setSearch] = useState(""); // -- set setSerachValue in App.js
+	const [searching, setSearch] = useState("");
+
+	const { search } = useLocation();
+
+	useEffect(() => {
+		const sea = new URLSearchParams(search).get("search") || "";
+		setSearch(sea);
+	}, [search]);
 	const inputRef = useRef(null);
 	const onButtonClick = () => {
 		inputRef.current.value = "";
-		setSearch("");
+		navigate("/");
 	};
 	const [user, setUser] = useState({});
 	const navigate = useNavigate();
@@ -53,7 +59,7 @@ const Header = () => {
 						placeholder="Nhập tên phim cần tìm"
 						ref={inputRef}
 					/>
-					{search && (
+					{searching && (
 						<div>
 							<button onClick={onButtonClick}>X</button>
 						</div>
