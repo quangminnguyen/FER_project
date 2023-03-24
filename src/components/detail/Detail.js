@@ -75,7 +75,6 @@ const Detail = () => {
         account = accounts.find((a) => a.id === e.account_id);
         return { ...e, ownerName: account.username };
       });
-
     setMovie({ ...movieDetail, rate: (totalRate / totalCount).toFixed(2), type: typeDetail.name });
     setComments([...movie_rate]);
     setUsers([...accounts]);
@@ -126,25 +125,26 @@ const Detail = () => {
     } else {
       document.querySelector("#startRateWarn").innerHTML = "";
     }
-
     let newComment = {
-      id: rates[rates?.length - 1]?.id + 1,
+      id: userComment.id,
       movie_id: movie?.id,
       rateStar: start * 1,
       comment: content,
       account_id: user?.id,
     };
 
-    var oldComments = comments;
+    var oldComments = [...comments];
     var newComments = [];
     var newArr = [];
 
+    if (oldComments.length === 0) {
+      newComment = { ...newComment, id: rates[rates?.length - 1]?.id + 1 };
+    }
     if (userComment.id === "") {
       newArr = [...rates, newComment];
       if (newComment.comment !== "") {
-        newComments = [...oldComments, newComment];
+        newComments = [...oldComments, { ...newComment }];
       }
-      console.log(newArr);
     } else {
       newArr = rates.map((e) => {
         if (e.id === userComment.id) {
@@ -159,27 +159,27 @@ const Detail = () => {
       });
       const check = oldComments.some((e) => e.id === newComment.id);
       if (check) {
-        oldComments.forEach((e) => {
-          if (e.id === userComment.id) {
-            if (newComment.comment !== "") {
-              console.log(newComment.comment);
-
-              newComments.push({
-                ...e,
-                comment: content,
-                rateStar: start * 1,
-              });
+        if (oldComments.length===0)
+          oldComments.forEach((e) => {
+            if (e.id === userComment.id) {
+              if (newComment.comment !== "") {
+                newComments.push({
+                  ...e,
+                  comment: content,
+                  rateStar: start * 1,
+                });
+              }
+            } else {
+              newComments.push(e);
             }
-          } else {
-            newComments.push(e);
-          }
-        });
+          });
       } else {
         if (newComment.comment !== "") {
-          newComments.push({ ...newComment });
+          newComments = [...oldComments, { ...newComment }];
         }
       }
     }
+
     const total = newArr?.reduce((current, item) => {
       return current + item?.rateStar;
     }, 0);
@@ -196,7 +196,7 @@ const Detail = () => {
         name: some?.username,
       };
     });
-    setUserComment({ ...newComment, id: userComment.id });
+    setUserComment({ ...newComment });
     setComments([...coms]);
     localStorage.removeItem("reviews");
     localStorage.setItem("reviews", JSON.stringify(newArr));
