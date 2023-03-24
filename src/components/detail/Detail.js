@@ -1,7 +1,9 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import "./style.css";
 const Detail = () => {
+  const starRateRef = useRef();
+  const commentRef = useRef();
   const [movie, setMovie] = useState({
     id: "",
     image: "",
@@ -48,33 +50,31 @@ const Detail = () => {
       return;
     }
     var account;
-    var commentDetail;
     var totalRate = 0;
+    var totalCount = 0;
+
     var movie_rate = rates
       ?.filter((e) => e.movie_id === movieDetail.id)
       ?.filter((e) => {
-        account = accounts.find((a) => a.id === e.account_id);
-        if (account.id === user.id) {
+        account = accounts?.find((a) => a.id === e.account_id);
+        if (account.id === user?.id) {
           setUserComment({ ...e });
         }
-
-        commentDetail = {
-          id: e.id,
-          rateStar: e.rateStar,
-          comment: e.comment,
-          name: account.username,
-          userID: e.userID,
-        };
         totalRate = totalRate + e.rateStar;
+        totalCount++;
         if (e.comment !== "") {
-          return commentDetail;
+          return { ...e };
         } else {
           return false;
         }
+      })
+      ?.map((e) => {
+        console.log(e);
+        account = accounts.find((a) => a.id === e.account_id);
+        return { ...e, ownerName: account.username };
       });
-    var rateAverage = totalRate / movie_rate.length;
 
-    setMovie({ ...movieDetail, rate: rateAverage, type: typeDetail.name });
+    setMovie({ ...movieDetail, rate: totalRate / totalCount, type: typeDetail.name });
     setComments([...movie_rate]);
     setUsers([...accounts]);
   }, [navigate, movie.id, slug]);
@@ -92,71 +92,57 @@ const Detail = () => {
       return (
         <div className="comments">
           <h1 className=" textTitle bold">Chi tiết đánh giá:</h1>
-          <form id="CommentForm" onSubmit={() => handleSubmitComment()}>
+          <form id="CommentForm" onSubmit={(e) => handleSubmitComment(e)}>
             <label htmlFor="starRate" className="text">
               Điểm đánh giá:
             </label>
-            <input
-              type="number"
-              name="starRate"
-              id="starRate"
-              className="commentStarRate"
-              value={userComment.rateStar}
-              onChange={(e) => {
-                setUserComment({ ...userComment, starRate: e.target.value });
-              }}
-            ></input>
+            <input type="number" className="commentStarRate" ref={starRateRef} />
             <div className="warn" id="startRateWarn"></div>
             <div className="text">Bình luận:</div>
-            <textarea
-              type="text"
-              name="commentText"
-              id="commentText"
-              cols="100"
-              rows="5"
-              value={userComment.comment}
-              onChange={(e) => {
-                setUserComment({ ...userComment, comment: e.target.value });
-              }}
-            ></textarea>
+            <textarea type="text" cols="100" rows="5" ref={commentRef} />
+            <button className="rateButton text" type="submit">
+              Đánh giá
+            </button>
           </form>
-          <button className="rateButton text" type="submit">
-            Đánh giá
-          </button>
         </div>
       );
     }
   };
-  const handleSubmitComment = () => {
+  const handleSubmitComment = (e) => {
+    e.preventDefault();
     var user = JSON.parse(localStorage.getItem("user"));
 
     if (user === null) {
       return navigate("/login");
     }
-    if (userComment.rateStar < 0 || userComment.rateStar > 10) {
+    const newCommentForm = {
+      starRate: starRateRef.current.value,
+      comment: commentRef.current.value,
+    };
+    if (newCommentForm.rateStar < 0 || newCommentForm.rateStar > 10) {
       document.querySelector("#startRateWarn").innerHTML = "Điểm đánh giá cần nằm trong khoảng từ 0 đến 10";
       return;
     } else {
       document.querySelector("#startRateWarn").innerHTML = "";
     }
     var newComment = {
-      id: "id",
+      id: "",
       movie_id: movie.id,
-      rateStar: userComment.rateStar,
-      comment: userComment.comment,
+      rateStar: newCommentForm.rateStar,
+      comment: newCommentForm.comment,
       account_id: user.id,
     };
     if (userComment.account_id === "") {
-      var id = users[users.length - 1].id + 1;
-      newComment = { ...newComment, id: id };
+      newComment = { ...newComment, id: users[users.length - 1].id + 1 };
       comments.push(newComment);
     } else {
       newComment = { ...newComment, id: userComment.id };
-      var index = comments.findIndex((c) => c.id === id);
+      var index = comments.findIndex((c) => c.id === userComment.id);
+
       comments[index] = newComment;
     }
+
     localStorage.setItem("reviews", JSON.stringify(comments));
-    
   };
 
   return (
@@ -186,7 +172,7 @@ const Detail = () => {
           {comments.length !== 0 ? (
             comments.map((e) => (
               <div id={e.id} key={e.id} className="text comment">
-                <span className="bold">{e.name}</span>: {e.comment}
+                <span className="bold">{e.ownerName}</span>: {e.comment}
               </div>
             ))
           ) : (
