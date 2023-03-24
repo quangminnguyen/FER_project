@@ -208,3 +208,20 @@
 .genre_input > button:hover {
 	transform: scale(0.9);
 }
+.item-h4 {
+	display: flex;
+	align-items: center;
+}
+.item-h4 > div > button {
+	margin-left: 1rem;
+	padding: 0 2rem;
+	height: 2.5rem;
+	cursor: pointer;
+	background-color: red;
+	color: white;
+	border: none;
+	border-radius: 0.5rem;
+}
+.item-h4 > div > button:hover {
+	box-shadow: 0 0 0.5rem 0.2rem rgba(0, 0, 0, 0.3);
+}

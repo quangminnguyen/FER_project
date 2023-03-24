@@ -25,7 +25,7 @@ const UserHomePage = ({ data }) => {
 				}, 0);
 			return {
 				...item,
-				evaluate: some / to || 0,
+				evaluate: Number.parseFloat(some / to || 0).toFixed(2),
 			};
 		});
 		setNewData([...newAr]);
