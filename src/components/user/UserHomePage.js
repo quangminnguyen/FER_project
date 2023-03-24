@@ -130,6 +130,13 @@ const UserHomePage = ({ data }) => {
 											</Link>
 											<h4 className="price">{product.year}</h4>
 										</header>
+										{menuType
+											.filter((x) => x.id == product.type)
+											.map((filteredName) => (
+												<p className="item-text">
+													Thể loại: {filteredName.name}
+												</p>
+											))}
 										<p className="item-text">
 											Điểm đánh giá: {product.evaluate}
 										</p>
