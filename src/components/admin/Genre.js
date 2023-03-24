@@ -30,7 +30,7 @@ const Genre = () => {
 		}
 		const ar = genres;
 		const value = {
-			id: ar[ar?.length - 1]?.id,
+			id: ar[ar?.length - 1]?.id + 1,
 			name: gen,
 		};
 		ar.push(value);
