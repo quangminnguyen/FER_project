@@ -117,7 +117,7 @@ const Detail = () => {
     if (user === null) {
       return navigate("/login");
     }
-    if (start < 0 || start > 10) {
+    if (start < 0 || start > 10 || start==="") {
       document.querySelector("#startRateWarn").innerHTML = "Điểm đánh giá cần nằm trong khoảng từ 0 đến 10";
       return;
     } else {
