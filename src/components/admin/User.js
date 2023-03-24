@@ -42,6 +42,18 @@ const User = () => {
 		localStorage.setItem("accounts", JSON.stringify(ar));
 		setUser([...ar]);
 	};
+
+	const handleChangeRole = (index, item) => {
+		const ar = user;
+		const some = item?.id?.toString() === cuUser?.id?.toString();
+		if (some) {
+			return window.alert("Bạn không thể change role chính bạn.");
+		}
+		ar[index].role = ar[index].role === "user" ? "admin" : "user";
+		localStorage.removeItem("accounts");
+		localStorage.setItem("accounts", JSON.stringify(ar));
+		setUser([...ar]);
+	};
 	return (
 		<div className="table_contain">
 			<table className="table">
@@ -63,7 +75,15 @@ const User = () => {
 							<th className="t_id font_400">{item?.id}</th>
 							<th className="t_email font_400">{item?.email}</th>
 							<th className="t_username font_400">{item?.username}</th>
-							<th className="t_role">{item?.role}</th>
+							<th className="t_role">
+								{item?.role}{" "}
+								<button
+									onClick={() => handleChangeRole(index, item)}
+									className="button"
+								>
+									Change Role
+								</button>
+							</th>
 							<th
 								style={!item?.block ? { color: "green" } : { color: "red" }}
 								className="t_block font_400"

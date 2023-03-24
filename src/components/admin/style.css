@@ -225,3 +225,9 @@
 .item-h4 > div > button:hover {
 	box-shadow: 0 0 0.5rem 0.2rem rgba(0, 0, 0, 0.3);
 }
+.button {
+	width: 80%;
+	height: 2rem;
+	font-size: 0.7rem;
+	cursor: pointer;
+}
