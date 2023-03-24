@@ -40,9 +40,12 @@ const Detail = () => {
     ) {
       return navigate("/login");
     }
-    var movieDetail = movies?.find((m) => m.id.toString() === slug);
-    var typeDetail = types?.find((m) => m.id.toString() === slug);
-    if (typeof movieDetail === "undefined" || typeof typeDetail === "undefined") {
+    var movieDetail = movies?.find((m) => m.id == slug);
+    if (typeof movieDetail === "undefined") {
+      return navigate("/login");
+    }
+    var typeDetail = types?.find((m) => m.id == movieDetail.type);
+    if (typeof typeDetail === "undefined") {
       return navigate("/login");
     }
 
@@ -117,7 +120,7 @@ const Detail = () => {
     if (user === null) {
       return navigate("/login");
     }
-    if (start < 0 || start > 10 || start==="") {
+    if (start < 0 || start > 10 || start === "") {
       document.querySelector("#startRateWarn").innerHTML = "Điểm đánh giá cần nằm trong khoảng từ 0 đến 10";
       return;
     } else {
