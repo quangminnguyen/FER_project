@@ -40,8 +40,8 @@ const Detail = () => {
     ) {
       return navigate("/login");
     }
-    var movieDetail = movies?.find((m) => m.id == slug);
-    var typeDetail = types?.find((m) => m.id == slug);
+    var movieDetail = movies?.find((m) => m.id.toString() === slug);
+    var typeDetail = types?.find((m) => m.id.toString() === slug);
     if (typeof movieDetail === "undefined" || typeof typeDetail === "undefined") {
       return navigate("/login");
     }
@@ -69,15 +69,14 @@ const Detail = () => {
         }
       })
       ?.map((e) => {
-        console.log(e);
         account = accounts.find((a) => a.id === e.account_id);
         return { ...e, ownerName: account.username };
       });
 
-    setMovie({ ...movieDetail, rate: totalRate / totalCount, type: typeDetail.name });
+    setMovie({ ...movieDetail, rate: (totalRate / totalCount).toFixed(2), type: typeDetail.name });
     setComments([...movie_rate]);
     setUsers([...accounts]);
-  }, [navigate, movie.id, slug]);
+  }, [navigate, movie.id, userComment.account_id, slug, comments.length]);
 
   const RateFormAppear = () => {
     var user = JSON.parse(localStorage.getItem("user"));
@@ -96,10 +95,10 @@ const Detail = () => {
             <label htmlFor="starRate" className="text">
               Điểm đánh giá:
             </label>
-            <input type="number" className="commentStarRate" ref={starRateRef} />
+            <input type="number" className="commentStarRate" ref={starRateRef} defaultValue={userComment.rateStar} />
             <div className="warn" id="startRateWarn"></div>
             <div className="text">Bình luận:</div>
-            <textarea type="text" cols="100" rows="5" ref={commentRef} />
+            <textarea type="text" cols="100" rows="5" ref={commentRef} defaultValue={userComment.comment} />
             <button className="rateButton text" type="submit">
               Đánh giá
             </button>
@@ -108,43 +107,97 @@ const Detail = () => {
       );
     }
   };
+
   const handleSubmitComment = (e) => {
     e.preventDefault();
-    var user = JSON.parse(localStorage.getItem("user"));
-
+    let user = JSON.parse(localStorage.getItem("user"));
+    let rates = JSON.parse(localStorage.getItem("reviews"));
+    const start = starRateRef.current?.value;
+    const content = commentRef.current?.value;
     if (user === null) {
       return navigate("/login");
     }
-    const newCommentForm = {
-      starRate: starRateRef.current.value,
-      comment: commentRef.current.value,
-    };
-    if (newCommentForm.rateStar < 0 || newCommentForm.rateStar > 10) {
+    if (start < 0 || start > 10) {
       document.querySelector("#startRateWarn").innerHTML = "Điểm đánh giá cần nằm trong khoảng từ 0 đến 10";
       return;
     } else {
       document.querySelector("#startRateWarn").innerHTML = "";
     }
-    var newComment = {
-      id: "",
-      movie_id: movie.id,
-      rateStar: newCommentForm.rateStar,
-      comment: newCommentForm.comment,
-      account_id: user.id,
+
+    let newComment = {
+      id: rates[rates?.length - 1]?.id + 1,
+      movie_id: movie?.id,
+      rateStar: start * 1,
+      comment: content,
+      account_id: user?.id,
     };
-    if (userComment.account_id === "") {
-      newComment = { ...newComment, id: users[users.length - 1].id + 1 };
-      comments.push(newComment);
+
+    var oldComments = comments;
+    var newComments = [];
+    var newArr = [];
+
+    if (userComment.id === "") {
+      newArr = [...rates, newComment];
+      if (newComment.comment !== "") {
+        newComments = [...oldComments, newComment];
+      }
+      console.log(newArr);
     } else {
-      newComment = { ...newComment, id: userComment.id };
-      var index = comments.findIndex((c) => c.id === userComment.id);
+      newArr = rates.map((e) => {
+        if (e.id === userComment.id) {
+          return {
+            ...e,
+            comment: content,
+            rateStar: start * 1,
+          };
+        } else {
+          return e;
+        }
+      });
+      const check = oldComments.some((e) => e.id === newComment.id);
+      if (check) {
+        oldComments.forEach((e) => {
+          if (e.id === userComment.id) {
+            if (newComment.comment !== "") {
+              console.log(newComment.comment);
 
-      comments[index] = newComment;
+              newComments.push({
+                ...e,
+                comment: content,
+                rateStar: start * 1,
+              });
+            }
+          } else {
+            newComments.push(e);
+          }
+        });
+      } else {
+        if (newComment.comment !== "") {
+          newComments.push({ ...newComment });
+        }
+      }
     }
-
-    localStorage.setItem("reviews", JSON.stringify(comments));
+    const total = newArr?.reduce((current, item) => {
+      return current + item?.rateStar;
+    }, 0);
+    setMovie({
+      ...movie,
+      rate: (total / newArr?.length).toFixed(2),
+    });
+    let coms = newComments.map((e) => {
+      const some = users?.find((infor) => {
+        return infor?.id?.toString() === e?.account_id?.toString();
+      });
+      return {
+        ...e,
+        name: some?.username,
+      };
+    });
+    setUserComment({ ...newComment, id: userComment.id });
+    setComments([...coms]);
+    localStorage.removeItem("reviews");
+    localStorage.setItem("reviews", JSON.stringify(newArr));
   };
-
   return (
     <div id="movieDetail">
       <div className="image">

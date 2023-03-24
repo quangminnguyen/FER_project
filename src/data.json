@@ -26,10 +26,11 @@
 		},
 		{
 			"id": 4,
-			"name": "https://cdnimg.vietnamplus.vn/uploaded/tpuoaob/2022_06_03/033.jpg",
+			"image": "https://cdnimg.vietnamplus.vn/uploaded/tpuoaob/2022_06_03/033.jpg",
+			"name": "Lối nhỏ vào đời",
 			"type": 2,
 			"year": 2022,
-			"description": "Bộ phim nói về sự chênh vênh giữa những người vừa bước qua tuổi cấp 3 và các bạn trẻ phải tự quyết định được tương lai của mình, những hành động của mình. Tuy nhiên, những hành động đó vẫn ở trong khuôn khổ kèm cặp của nhà trường và gia đình. Họ sẽ vướng vào những khúc mắc gì và suy nghĩ của họ như thế nào và họ sẽ phải đứng lên như thế nào để hướng đến tương lai tốt đẹp"
+			"description": "Bộ phim nói về sự chênh vênh giữa những người vừa bước qua tuổi cấp 3 và các bạn trẻ phải tự quyết định được tương lai của mình, những hành động của mình. Tuy nhiên, những hành động đó vẫn ở trong khuôn khổ kèm cặp của nhà trường và gia đình."
 		},
 		{
 			"id": 5,
@@ -38,6 +39,14 @@
 			"type": 4,
 			"year": 2021,
 			"description": "Delusion là một bộ phim kinh dị hồi hộp Trung Quốc-Hồng Kông năm 2016 do Danny Pang Phat làm đạo diễn và có sự tham gia của Pakho Chau, An Hu, Cici và Cheng Yuanyuan. Nó được phát hành tại Trung Quốc bởi Huace Pictures vào ngày 6 tháng 5 năm 2016."
+		},
+		{
+			"id": 6,
+			"image": "https://encrypted-tbn2.gstatic.com/images?q=tbn:ANd9GcQozlUbW_O-g9o2dyexNL6AEelwc9He7-EmYI9QEEQ334ug1tVu",
+			"name": "Nhà bà nữ",
+			"type": 2,
+			"year": 2023,
+			"description": "Nhà bà Nữ là một bộ phim điện ảnh chính kịch, gia đình của Việt Nam năm 2023 do Trấn Thành sản xuất kiêm đạo diễn. Bộ phim do Đỗ Hoàng Vũ, quản lý của Trấn Thành và Hari Won đảm nhận vai trò đồng sản xuất."
 		}
 	],
 	"types": [
